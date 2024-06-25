@@ -1,0 +1,198 @@
+paths:
+  /api/products/:
+    get:
+      summary: Obtener todos los productos
+      tags:
+        - Productos
+      responses:
+        "200":
+          description: Todos los productos obtenidos correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/Product'
+        "500":
+          description: Error interno del servidor
+
+    post:
+      summary: Guardar un producto nuevo en la BDD
+      tags:
+        - Productos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/createProduct'        
+      responses:
+        "200":
+          description: El producto fue creado correctamente
+        "401":
+          description: Error por falta de permisos
+        "500":
+          description: Error del servidor
+
+  /api/products/{pid}:
+    get:
+      summary: Obtener un producto especifico por id
+      tags:
+        - Productos
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: pid es el id del producto que quiero obtener
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: El producto fue obtenido correctamente
+          type: object
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Product'
+        "500":
+          description: Error interno del servidor
+    
+    put:
+      summary: Actualizar el producto por el id
+      tags:
+        - Productos
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: pid es el id del producto que se desea actualizar
+          schema:
+            $type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/createUser'
+      responses:
+        "200":
+          description: El producto fue actualizado correctamente
+        "401":
+          description: Error por falta de permisos
+        "500":
+          description: Error del servidor
+
+    delete:
+      summary: Eliminar el producto por el id
+      tags:
+        - Productos
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: pid es el id del producto que se desea eliminar (borrado lógico)
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: El producto fue eliminado correctamente
+        "401":
+          description: Error por falta de permisos
+        "500":
+          description: Error del servidor
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: id del producto autogenerado por la BDD
+        title:
+          type: string
+          description: titulo del producto 
+          required: true
+        description: 
+          type: string
+          description: descripcion del producto
+          required: true
+        code:
+          type: string
+          description: código del producto
+          required: true
+          index: true
+        price: 
+          type: number
+          description: precio del producto
+          required: true
+        status: 
+          type: boolean
+          description: estado del producto, true si está disponible, false si no lo está (borrado lógico)
+          required: true
+        stock: 
+          type: number
+          description: cantidad de items del producto
+          required: true
+        category: 
+          type: string
+          description: categoría del producto
+          required: true
+        thumbnails: 
+          type: array
+          items:
+            type: string
+          description: rutas de imágenes para el producto, no es obligatorio
+          default: []
+        owner:
+          type: string
+          description: email del usuario que ingresa el producto, se obtiene la info del usuario logueado de las cookies
+          default: config.admin
+
+      example:
+        _id: ObjectId('6655fd38c0b69717be205c31')
+        title: Buzo Peñarol Puma Culture 2022 Futbol Casual
+        description: Buzo casual negro puma oficial, temporada 2022
+        code: 28052024001
+        price: 20
+        status: true
+        stock: 10
+        category: indumentaria deportiva
+        thumbnails: ["buzo_puma_peñarol_2022.jpg"]
+        owner: diego@mail.com
+  
+  requestBodies:
+    createProduct:
+      type: object
+      properties:
+        title:
+          type: string
+          description: titulo del producto 
+        description: 
+          type: string
+          description: descripcion del producto
+        code:
+          type: string
+          description: código del producto
+        price: 
+          type: number
+          description: precio del producto
+        stock: 
+          type: number
+          description: cantidad de items del producto
+        category: 
+          type: string
+          description: categoría del producto
+        thumbnails: 
+          type: array
+          items:
+            type: string
+          description: rutas de imágenes para el producto, no es obligatorio
+      example:
+        title: Buzo Peñarol Puma Culture 2022 Futbol Casual
+        description: Buzo casual negro puma oficial, temporada 2022
+        code: 28052024001
+        price: 20
+        stock: 10
+        category: indumentaria deportiva
+        thumbnails: ["buzo_puma_peñarol_2022.jpg"]
