@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { passportCall } from "../utils.js";
-import UserController from "../controllers/user.controller.js";
+import SessionController from "../controllers/session.controller.js";
 
-const usersRouter = Router();
+const sessionsRouter = Router();
 const {
   registerUser,
   login,
@@ -10,20 +10,20 @@ const {
   resetPassToken,
   updatePass,
   updateUserRol
-} = new UserController();
+} = new SessionController();
 
-usersRouter.post("/register", registerUser);
-usersRouter.post("/login", login);
-usersRouter.get("/api/sessions/current", passportCall("jwt", ["USER", "PREMIUM"]), async (req, res)=>{
+sessionsRouter.post("/register", registerUser);
+sessionsRouter.post("/login", login);
+sessionsRouter.get("/api/sessions/current", passportCall("jwt", ["USER", "PREMIUM"]), async (req, res)=>{
   res.send(req.user);
 });
 
-usersRouter.post("/resetPass", passRecoveryMail);
+sessionsRouter.post("/resetPass", passRecoveryMail);
 
-usersRouter.get("/resetPass/:token", resetPassToken);
+sessionsRouter.get("/resetPass/:token", resetPassToken);
 
-usersRouter.post("/newPass", updatePass);
+sessionsRouter.post("/newPass", updatePass);
 
-usersRouter.post("/api/users/premium/:uid", passportCall("jwt", ["USER", "PREMIUM"]), updateUserRol);
+sessionsRouter.post("/api/users/premium/:uid", passportCall("jwt", ["USER", "PREMIUM"]), updateUserRol);
 
-export default usersRouter;
+export default sessionsRouter;

@@ -9,7 +9,7 @@ import { generateUserErrorInfo, mongoError, unfindField, uniqueField } from "../
 import EErrors from "../services/errors/enums.js";
 import MailingService from "../services/mailing.js";
 
-class UserController {
+class SessionController {
 
   registerUser = async (req, res, next) => {
     try {
@@ -173,4 +173,4 @@ class UserController {
   }
 
 }
-export default UserController;
+export default SessionController;
