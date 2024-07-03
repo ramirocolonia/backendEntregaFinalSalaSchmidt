@@ -16,15 +16,18 @@ import config from "./config/config.js";
 import MongoConnection from "./config/MongoConnection.js";
 import errorHandler from "./middlewares/errors/index.js"
 import { swaggerSpecs } from "./config/doc.config.js";
+import usersRouter from "./routes/users.router.js";
+import { initializeSocketUsers } from "./sockets/socketServer.js";
 
 const app = express();
-const PORT = config.port;
+const PORT = config.port || 3000;
 
-app.listen(PORT, () => {
+const httpServer = app.listen(PORT, () => {
   console.log(`servidor escuchando en el puerto ${PORT}`);
 });
 
 const mongoConnection = MongoConnection.getInstance();
+// const socketServer = await initializeSocketUsers(httpServer);
 
 app.use(express.json());
 app.use(cookieParser());
@@ -44,5 +47,6 @@ app.use("/", cartsRouter);
 app.use("/", chatsRouter);
 app.use("/", sessionsRouter);
 app.use("/", mockingRouter);
+app.use("/api/users", usersRouter);
 app.use("/api/docs", swaggerUI.serve, swaggerUI.setup(swaggerSpecs));
 app.use(errorHandler);

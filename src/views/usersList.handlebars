@@ -1,0 +1,29 @@
+{{!-- <div>
+    <h1>Lista de Usuarios del ecommerce</h1>
+    <table id="usersTable"></table>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/script.js"></script> --}}
+<div>
+    <h1>Lista de Usuarios del ecommerce</h1>
+    <table>
+        <tr>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Rol</th>
+            <th>Modificar Rol</th>
+            <th>Eliminar Usuario</th>
+        </tr>
+    {{#each users}}
+        <tr>
+            <td>{{this.full_name}}</td>
+            <td>{{this.email}}</td>
+            <td>{{this.rol}}</td>
+            <td><button id={{this.id}} onclick="updateRol(this.id)">Modificar</button></td>
+            <td><button id={{this.id}} onclick="deleteUser(this.id)">Eliminar</button></td>            
+        </tr>
+    {{/each}}
+    </table>
+</div>
+<script src="/js/script.js"></script>

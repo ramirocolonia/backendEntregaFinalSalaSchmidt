@@ -2,20 +2,20 @@
 <div>
   <form action="/register" method="post">
     <label for="first_name">ingrese su nombre</label>
-    <input type="text" id="first_name" name="first_name" placeholder="Nombre">
+    <input type="text" id="first_name" name="first_name" placeholder="Nombre" required>
     <label for="last_name">ingrese su apellido</label>
-    <input type="text" id="last_name" name="last_name" placeholder="Apellido">
+    <input type="text" id="last_name" name="last_name" placeholder="Apellido" required>
     <label for="rol">seleccione el rol</label>
     <select name="rol">
       <option value="USER" selected>USER</option>
       <option value="PREMIUM">PREMIUM</option>
     </select>
     <label for="email">ingrese su correo electrónico</label>
-    <input type="email" id="email" name="email" placeholder="Correo electrónico">
+    <input type="email" id="email" name="email" placeholder="Correo electrónico" required>
     <label for="age">ingrese su edad</label>
-    <input type="number" id="age" name="age" placeholder="Edad">
+    <input type="number" id="age" name="age" placeholder="Edad" required>
     <label for="password">ingrese su contraseña</label>
-    <input type="password" id="password" name="password" placeholder="Contraseña">
+    <input type="password" id="password" name="password" placeholder="Contraseña" required>
     <button type="submit">Registrar Usuario</button>
   </form>
 </div>

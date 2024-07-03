@@ -9,7 +9,6 @@ const {
   passRecoveryMail,
   resetPassToken,
   updatePass,
-  updateUserRol
 } = new SessionController();
 
 sessionsRouter.post("/register", registerUser);
@@ -23,7 +22,5 @@ sessionsRouter.post("/resetPass", passRecoveryMail);
 sessionsRouter.get("/resetPass/:token", resetPassToken);
 
 sessionsRouter.post("/newPass", updatePass);
-
-sessionsRouter.post("/api/users/premium/:uid", passportCall("jwt", ["USER", "PREMIUM"]), updateUserRol);
 
 export default sessionsRouter;

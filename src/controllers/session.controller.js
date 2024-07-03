@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { createHash, isValidPassword } from "../utils.js";
 import config from "../config/config.js";
 import { userService } from "../repositories/index.js";
-import UserDTO from "../dao/DTOs/user.dto.js";
+import SessionDTO from "../dao/DTOs/session.dto.js";
 import CustomError from "../services/errors/CustomError.js";
 import { generateUserErrorInfo, mongoError, unfindField, uniqueField } from "../services/errors/info.js";
 import EErrors from "../services/errors/enums.js";
@@ -21,7 +21,8 @@ class SessionController {
           rol,
           email,
           age,
-          password: password
+          password: password,
+          last_connection: new Date().getTime()
         };
         if (Object.values(newUser).every((value) => String(value).trim() !== "" && value !== undefined)) {
           newUser.password = createHash(password);
@@ -77,10 +78,10 @@ class SessionController {
       // retorna asi para que les resulte mas facil en las correcciones
       res.send({ status: "success", payload: usrDTO, token: token });
     } else {
-      const user = await userService.findOneUser(email);
+      const user = await userService.findOneUser({email: email});
       if (user) {
         if (isValidPassword(user, password)) {
-          usrDTO = new UserDTO(user);
+          usrDTO = new SessionDTO(user);
           const token = jwt.sign({usrDTO}, config.tokenPass, {expiresIn: "24h"});
           res.cookie("tokenUsrCookie", token, {maxAge: 60 * 60 * 1000 * 24, httpOnly: true});
           
@@ -103,7 +104,7 @@ class SessionController {
 
   passRecoveryMail = async (req, res) =>{
     const {email} = req.body;
-    const user = await userService.findOneUser(email);
+    const user = await userService.findOneUser({email: email});
     if(user){
       const email = user.email;
       const token = jwt.sign({email}, config.tokenPass, {expiresIn: "1h"});
@@ -134,7 +135,7 @@ class SessionController {
 
   updatePass = async (req, res) =>{
     const email = req.cookies.cookieUsr;
-    const user = await userService.findOneUser(email);
+    const user = await userService.findOneUser({email: email});
     const newPassword = req.body.pass;
     if(!isValidPassword(user, newPassword)){
       user.password = createHash(newPassword);
@@ -151,26 +152,5 @@ class SessionController {
       res.send({ status: "error", message: "La contraseña ingresada es igual a la actual"});
     }
   }
-
-  updateUserRol = async (req, res) =>{
-    const email = req.user.usrDTO.email;
-    const user = await userService.findOneUser(email);
-    if(user.rol === "ADMIN"){
-      res.send({ status: "error", message: "Error, el usuario logueado es Administrador"});
-    }else{
-      if(user.rol === "PREMIUM"){
-        user.rol = "USER";
-      }else{
-        user.rol = "PREMIUM";
-      }
-      if(await userService.updateUser(user._id, user)){
-        // se envia el user completo para facilitar pruebas
-        res.send({status: "success", message: "Cambio de rol con éxito", payload:  user});
-      }else{
-        res.send({ status: "error", message: "Error en al actualizar en BDD"});
-      }
-    }
-  }
-
 }
 export default SessionController;

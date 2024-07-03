@@ -34,7 +34,18 @@ const userSchema = new mongoose.Schema({
           ref: "carts"
         }
     }
-  }
+  },
+  documents: {
+    type: [
+      {
+        name:{type: String},
+        reference: {type: String}
+      }
+    ],
+    default:[]
+  },
+  last_connection: {type: Date},
+  is_active: {type: Boolean, default: true}
 });
 
 userSchema.pre("findOne", function(){

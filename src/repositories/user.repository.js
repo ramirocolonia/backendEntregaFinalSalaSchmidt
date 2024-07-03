@@ -15,13 +15,23 @@ export default class UserRepository{
     return false;
   }
 
-  findOneUser = async(uEmail) =>{
-    const result = await this.dao.findOneUser(uEmail);
+  findOneUser = async(query) =>{
+    const result = await this.dao.findOneUser(query);
     return result;
   }
 
   updateUser = async(uId, newValues) =>{
     const result = await this.dao.updateUser(uId, newValues);
+    return result; 
+  }
+
+  findUsers = async(query) =>{
+    const result = await this.dao.findUsers(query);
+    return result; 
+  }
+
+  updateManyUsers = async(filter, update) =>{
+    const result = await this.dao.updateManyUsers(filter, update);
     return result; 
   }
 }
