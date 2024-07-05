@@ -1,12 +1,12 @@
-{{!-- <h1>Bienvenido USUARIO: {{user}} ---- con el ROL: {{rol}} ------ <a href="/logout">LOGOUT</a></h1> --}}
+<h2>Bienvenido USUARIO: {{user}} --- ROL: {{rol}} --- <a href="/cart/{{cid}}">IR AL CARRITO</a> -- <a href="/api/sessions/logout">LOGOUT</a></h2>
 {{#if isValid}}
   <div>
       {{#each docs}}
         <div>
-          <h2>Producto: {{this.title}} &nbsp; Precio: {{this.price}}</h2>
+          <h3>Producto: {{this.title}} &nbsp; Precio: {{this.price}}</h3>
           <p>Categoría: {{this.category}} &nbsp; Stock: {{this.stock}} &nbsp; Código: {{this.code}}</p>
           <p>Descripción: {{this.description}}</p>
-          <button id={{this.id}} onclick="addToCart(this.id)">Agregar al carrito</button>
+          <button id={{this.id}} onclick="addToCart('{{this.id}}', '{{../cid}}')">Agregar al carrito</button>
         </div>
         <hr/>
         <br/>

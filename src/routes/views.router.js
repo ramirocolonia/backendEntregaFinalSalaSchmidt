@@ -2,11 +2,12 @@ import {Router} from "express";
 
 import { passportCall } from "../utils.js";
 import UserDTO from "../dao/DTOs/user.dto.js";
-import { userService } from "../repositories/index.js";
+import { cartService, userService } from "../repositories/index.js";
+import ProductController from "../controllers/product.controller.js";
 
 const viewsRouter = Router();
 
-viewsRouter.get("/chat", passportCall("jwt", ["USER"]), (req,res)=>{
+viewsRouter.get("/chat", passportCall("jwt", ["USER", "PREMIUM"]), (req,res)=>{
   res.render("chat", {})
 });
 
@@ -34,7 +35,33 @@ viewsRouter.get("/userslist", passportCall("jwt", ["ADMIN"]), async(req, res) =>
   } catch (error) {
     res.send({ status: "error", message: "Error en ejecución, " + error });
   }
-  
+});
+
+viewsRouter.get("/products", passportCall("jwt", ["USER", "PREMIUM"]), async (req,res)=>{
+  try {
+    const productController = new ProductController();
+    const resp = await productController.loadProducts(req,res);
+    resp.payload.prevLink = resp.payload.hasPrevPage?`http://localhost:8080/products?page=${resp.payload.prevPage}&limit=${resp.payload.limit}`:"";
+    resp.payload.nextLink = resp.payload.hasNextPage?`http://localhost:8080/products?page=${resp.payload.nextPage}&limit=${resp.payload.limit}`:"";
+    resp.payload.isValid = (resp.payload.docs.length > 0);
+    resp.payload.user = req.user.usrDTO.email;
+    resp.payload.rol = req.user.usrDTO.rol;
+    resp.payload.cid = req.user.usrDTO.cart;
+    res.render("products", resp.payload);
+  } catch (error) {
+    res.send({status: "error", message: "Error en ejecución, " + error});
+  }
+});
+
+viewsRouter.get("/cart/:cid", passportCall("jwt", ["USER", "PREMIUM"]), async (req,res)=>{
+  try {
+    const cart = await cartService.findOneCart(req.params.cid);
+    if(cart){
+      res.render("cartList", {cid: cart._id, products: cart.products.map(prod => prod.toObject())});
+    }
+  } catch (error) {
+    res.send({status: "error", message: "Error en ejecución, " + error});
+  }
 });
 
 export default viewsRouter;

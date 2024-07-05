@@ -8,7 +8,7 @@ const {
   readMsgs
 } = new ChatController();
 
-chatsRouter.post("/api/chat", passportCall("jwt", ["USER"]), sendMsg);
-chatsRouter.get("/api/chat", readMsgs);
+chatsRouter.post("/", passportCall("jwt", ["USER", "PREMIUM"]), sendMsg);
+chatsRouter.get("/", readMsgs);
 
 export default chatsRouter;

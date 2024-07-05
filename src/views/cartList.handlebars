@@ -5,12 +5,18 @@
           <h2>Producto: {{this.product.title}} &nbsp; Precio: {{this.product.price}}</h2>
           <p>Categoría: {{this.product.category}} &nbsp; Código: {{this.product.code}} &nbsp; Cantidad: {{this.quantity}} </p>
           <p>Descripción: {{this.product.description}}</p>
+          <button id={{this._id}} onclick="removeProductFromCart('{{this._id}}', '{{../cid}}')">Eliminar</button>
         </div>
         <hr/>
         <br/>
       {{/each}}
   </div>
   <br/>
+  <div>
+
+  </div>
 {{else}}
   <h1>No hay PRODUCTOS para mostrar</h1>
 {{/if}}  
+
+<script src="/js/script.js"></script>

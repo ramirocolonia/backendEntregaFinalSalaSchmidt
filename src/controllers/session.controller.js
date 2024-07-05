@@ -115,7 +115,7 @@ class SessionController {
         subject: "Recuperación de contraseña",
         html: `
               <p>Click en el siguiente enlace para recuperar contraseña: </p>
-              <a href = "http://localhost:8080/resetPass/${token}">Recuperar Contraseña</a>`
+              <a href = "http://localhost:8080/api/sessions/resetPass/${token}">Recuperar Contraseña</a>`
       };
       await mailer.sendSimpleMail(mailOpts);
       res.status(200).send({status: "success", message: "Email enviado"});
@@ -125,7 +125,7 @@ class SessionController {
   resetPassToken = async (req, res) =>{
     const token = req.params.token;
     jwt.verify(token, config.tokenPass, (error, decoded) =>{
-      if(error) return res.redirect("/resetPass")
+      if(error) return res.redirect("/api/sessions/resetPass")
       else{
         res.cookie("cookieUsr", decoded.email, { httpOnly: true });
         res.render("newPass", {user:decoded.email});
@@ -142,9 +142,9 @@ class SessionController {
       if(await userService.updateUser(user._id, user)){
         res.clearCookie("cookieUsr");
         res.send({ 
-          status: "success", 
-          payload:  `Cambio de contraseña correcto para el usuario 
-                    ${user}` });
+          status: "success",
+          message: `Cambio de contraseña correcto para el usuario ${user.email}`, 
+          payload:  user });
       }else{
         res.send({ status: "error", message: "Error en al actualizar en BDD"});
       }

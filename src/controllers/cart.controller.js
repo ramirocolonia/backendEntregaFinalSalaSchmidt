@@ -41,20 +41,26 @@ class CartController {
       const usr = req.user.usrDTO;
       if (cart) {
         if (product) {
-          if(product.owner !== usr.email){
-            let addQuantity = cart.products.find((p) => p.product._id == req.params.pid);
-            if (addQuantity) {
-              addQuantity.quantity += 1;
-            } else {
-              cart.products.push({ product: product.id, quantity: 1 });
-            }
-            if (await cartService.updateCart(cart)) {
-              res.send({ status: "success", payload: product });
-            } else {
-              res.send({ status: "error", message: "Error al guardar producto" });
+          if(product.stock > 0){
+            if(product.owner !== usr.email){
+              let addQuantity = cart.products.find((p) => p.product._id == req.params.pid);
+              if (addQuantity) {
+                addQuantity.quantity += 1;
+              } else {
+                cart.products.push({ product: product.id, quantity: 1 });
+              }
+              if (await cartService.updateCart(cart)) {
+                product.stock -= 1;
+                await productService.updateProduct(product._id, product);
+                res.send({ status: "success", payload: product });
+              } else {
+                res.send({ status: "error", message: "Error al guardar producto" });
+              }
+            }else{
+              res.send({ status: "error", message: "El producto agregado al carrito pertenece al usuario" });  
             }
           }else{
-            res.send({ status: "error", message: "El producto agregado al carrito pertenece al usuario" });  
+            res.send({ status: "error", message: "No hay stock del producto seleccionado" });
           }
         } else {
           res.send({ status: "error", message: "Producto inexistente" });
@@ -71,9 +77,7 @@ class CartController {
     try {
       const cart = await cartService.findOneCart(req.params.cid);
       if (cart) {
-        const product = cart.products.find(
-          (p) => p.product._id == req.params.pid
-        );
+        const product = cart.products.find((p) => p._id == req.params.pid);
         if (product) {
           cart.products.pull(product);
           if (await cartService.updateCart(cart)) {

@@ -12,8 +12,15 @@ const {
 } = new SessionController();
 
 sessionsRouter.post("/register", registerUser);
+
 sessionsRouter.post("/login", login);
-sessionsRouter.get("/api/sessions/current", passportCall("jwt", ["USER", "PREMIUM"]), async (req, res)=>{
+
+sessionsRouter.get("/logout", (req,res)=>{
+  res.clearCookie("tokenUsrCookie")
+  res.redirect("/login");
+});
+
+sessionsRouter.get("/current", passportCall("jwt", ["USER", "PREMIUM"]), async (req, res)=>{
   res.send(req.user);
 });
 

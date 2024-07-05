@@ -1,4 +1,6 @@
-import { productService } from "../repositories/index.js";
+import MailingService from "../services/mailing.js";
+import config from "../config/config.js";
+import { productService, userService } from "../repositories/index.js";
 import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/enums.js";
 import { 
@@ -25,7 +27,7 @@ class ProductController {
         order.sort = { price: parseInt(req.query.sort) };
       order.lean = true;
       const products = await productService.getProducts(query, order);
-      res.send({ status: "success", payload: products });
+      return({ status: "success", payload: products });
     } catch (error) {
       res.send({ status: "error", message: "Error en ejecución, " + error });
     }
@@ -150,6 +152,18 @@ class ProductController {
       if (product) {
         if(product.owner === usr.email || usr.rol === "ADMIN"){
           if (await productService.deleteProduct(product)) {
+            if(product.owner !== config.admin){
+              const usrOwner = await userService.findOneUser({email: product.owner});
+              const mailer = new MailingService();
+              const mailOpts = {
+                from: "Ecommerce",
+                to: usrOwner.email,
+                subject: `Producto ${product._id} eliminado`,
+                html: `
+                  <p>Su producto ${product._id} fue eliminado correctamente</p>`
+              };
+              await mailer.sendSimpleMail(mailOpts);
+            }
             res.send({ status: "success", payload: `Producto id ${req.params.pid} eliminado correctamente` });
           } else {
             const err = new CustomError(

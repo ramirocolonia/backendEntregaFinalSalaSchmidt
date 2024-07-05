@@ -14,13 +14,13 @@ const {
   createTicket
 } = new CartController();
 
-cartsRouter.post("/api/carts", newCart);
-cartsRouter.get("/api/carts/:cid", loadCart);
-cartsRouter.post("/api/carts/:cid/products/:pid", passportCall("jwt", ["USER", "PREMIUM"]), addProductInCart);
-cartsRouter.delete("/api/carts/:cid/products/:pid", removeProductFromCart);
-cartsRouter.put("/api/carts/:cid", updateCartItems);
-cartsRouter.put("/api/carts/:cid/products/:pid", updateQuantityItemCart);
-cartsRouter.delete("/api/carts/:cid", removeAllProductsFromCart);
+cartsRouter.post("/", newCart);
+cartsRouter.get("/:cid", loadCart);
+cartsRouter.post("/:cid/products/:pid", passportCall("jwt", ["USER", "PREMIUM"]), addProductInCart);
+cartsRouter.delete("/:cid/products/:pid", removeProductFromCart);
+cartsRouter.put("/:cid", updateCartItems);
+cartsRouter.put("/:cid/products/:pid", updateQuantityItemCart);
+cartsRouter.delete("/:cid", removeAllProductsFromCart);
 cartsRouter.post("/:cid/purchase", passportCall("jwt", ["USER", "PREMIUM"]), createTicket);
 
 export default cartsRouter;
