@@ -2,6 +2,7 @@ import multer from "multer";
 import UserDTO from "../dao/DTOs/user.dto.js";
 import { upload } from "../multer.js";
 import { userService } from "../repositories/index.js";
+import MailingService from "../services/mailing.js";
 
 class UserController {
   updateUserRol = async (req, res) => {
@@ -73,6 +74,21 @@ class UserController {
         is_active: true,
         last_connection: {$lte: limit}
       };
+      const users = await userService.findUsers(query);
+      let mailer;
+      let mailOpts;
+      users.forEach(async (user) => {
+        user.is_active = false;
+        mailer = new MailingService();
+        mailOpts = {
+          from: "Ecommerce",
+          to: user.email,
+          subject: `Usuario eliminado`,
+          html: `
+            <p>Su usuario fue eliminado por inactividad</p>`
+        };
+        await mailer.sendSimpleMail(mailOpts);
+      });
       const result = await userService.updateManyUsers(
         query,
         { is_active: false }
