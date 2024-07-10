@@ -2,7 +2,6 @@ import multer from "multer";
 import UserDTO from "../dao/DTOs/user.dto.js";
 import { upload } from "../multer.js";
 import { userService } from "../repositories/index.js";
-import { tr } from "@faker-js/faker";
 
 class UserController {
   updateUserRol = async (req, res) => {
@@ -124,9 +123,6 @@ class UserController {
           name: type,
           reference: file.path
         }));
-        // documents.map((doc) => {
-        //   user.documents.push(doc);
-        // });
         // chequeo si ya existe ese documento guardado y se modifica la referencia en BDD
         documents.forEach(newDoc => {
           let doc = user.documents.find(item => item.name === newDoc.name);

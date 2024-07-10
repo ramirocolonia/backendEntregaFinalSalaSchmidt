@@ -41,27 +41,21 @@ class CartController {
       const usr = req.user.usrDTO;
       if (cart) {
         if (product) {
-          // if(product.stock > 0){
-            if(product.owner !== usr.email){
-              let addQuantity = cart.products.find((p) => p.product._id == req.params.pid);
-              if (addQuantity) {
-                addQuantity.quantity += 1;
-              } else {
-                cart.products.push({ product: product.id, quantity: 1 });
-              }
-              if (await cartService.updateCart(cart)) {
-                // product.stock -= 1;
-                // await productService.updateProduct(product._id, product);
-                res.send({ status: "success", payload: product });
-              } else {
-                res.status(401).send({ status: "error", message: "Error al guardar producto" });
-              }
-            }else{
-              res.status(401).send({ status: "error", message: "El producto agregado al carrito pertenece al usuario" });  
+          if(product.owner !== usr.email){
+            let addQuantity = cart.products.find((p) => p.product._id == req.params.pid);
+            if (addQuantity) {
+              addQuantity.quantity += 1;
+            } else {
+              cart.products.push({ product: product.id, quantity: 1 });
             }
-          // }else{
-          //   res.send({ status: "error", message: "No hay stock del producto seleccionado" });
-          // }
+            if (await cartService.updateCart(cart)) {
+              res.send({ status: "success", payload: product });
+            } else {
+              res.status(401).send({ status: "error", message: "Error al guardar producto" });
+            }
+          }else{
+            res.status(401).send({ status: "error", message: "El producto agregado al carrito pertenece al usuario" });  
+          }
         } else {
           res.status(401).send({ status: "error", message: "Producto inexistente" });
         }
