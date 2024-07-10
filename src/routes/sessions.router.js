@@ -6,19 +6,17 @@ const sessionsRouter = Router();
 const {
   registerUser,
   login,
+  logout,
   passRecoveryMail,
   resetPassToken,
-  updatePass,
+  updatePass
 } = new SessionController();
 
 sessionsRouter.post("/register", registerUser);
 
 sessionsRouter.post("/login", login);
 
-sessionsRouter.get("/logout", (req,res)=>{
-  res.clearCookie("tokenUsrCookie")
-  res.redirect("/login");
-});
+sessionsRouter.get("/logout", passportCall("jwt", ["USER", "PREMIUM", "ADMIN"]), logout);
 
 sessionsRouter.get("/current", passportCall("jwt", ["USER", "PREMIUM"]), async (req, res)=>{
   res.send(req.user);

@@ -57,11 +57,21 @@ viewsRouter.get("/cart/:cid", passportCall("jwt", ["USER", "PREMIUM"]), async (r
   try {
     const cart = await cartService.findOneCart(req.params.cid);
     if(cart){
-      res.render("cartList", {cid: cart._id, products: cart.products.map(prod => prod.toObject())});
+      res.render("cartList", {
+        cid: cart._id, 
+        products: cart.products.map(prod => prod.toObject()), 
+        total: cart.products.reduce((total, product) => total + (product.quantity * product.product.price),0)
+      });
     }
   } catch (error) {
     res.send({status: "error", message: "Error en ejecución, " + error});
   }
+});
+
+viewsRouter.get("/documents", passportCall("jwt", ["USER", "PREMIUM"]), async(req, res) =>{
+  const email = req.user.usrDTO.email;
+  const user = await userService.findOneUser({ email: email });
+  res.render("documents", {uid: user._id, user: user.email});
 });
 
 export default viewsRouter;

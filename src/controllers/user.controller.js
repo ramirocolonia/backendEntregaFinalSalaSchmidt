@@ -1,30 +1,55 @@
+import multer from "multer";
 import UserDTO from "../dao/DTOs/user.dto.js";
+import { upload } from "../multer.js";
 import { userService } from "../repositories/index.js";
+import { tr } from "@faker-js/faker";
 
 class UserController {
   updateUserRol = async (req, res) => {
     const uid = req.params.uid;
     const user = await userService.findOneUser({_id: uid});
+
     if (user.rol === "ADMIN") {
       res.send({
         status: "error",
         message: "Error, el usuario seleccionado es Administrador",
       });
     } else {
+      let rolChange = false;
       if (user.rol === "PREMIUM") {
         user.rol = "USER";
+        rolChange = true;
       } else {
-        user.rol = "PREMIUM";
-      }
-      if (await userService.updateUser(uid, user)) {
-        // se envia el user completo para facilitar pruebas
-        res.send({
-          status: "success",
-          message: "Cambio de rol con éxito",
-          payload: user,
+        // chequeo que haya subido los documentos:
+        // identificación (ID), comprobante domicilio (ADDRESS) Y comprobante estado de cuenta (ACCOUNTSTATEMENT)
+        let haveID = false, haveAddress = false, haveAccountStatement = false;
+        user.documents.map((doc) =>{
+          if(doc.name === "ID"){
+            haveID = true;
+          }else if(doc.name === "ADDRESS"){
+            haveAddress = true;
+          }else if(doc.name === "ACCOUNTSTATEMENT"){
+            haveAccountStatement = true;
+          }
         });
-      } else {
-        res.send({ status: "error", message: "Error en al actualizar en BDD" });
+        if(haveAccountStatement && haveAddress && haveAddress){
+          user.rol = "PREMIUM";
+          rolChange = true;
+        }else{
+          res.status(403).send({ status: "error", message: "Error, le faltan subir documentos" });
+        }
+      }
+      if(rolChange){
+        if (await userService.updateUser(uid, user)) {
+          // se envia el user completo para facilitar pruebas
+          res.send({
+            status: "success",
+            message: "Cambio de rol con éxito",
+            payload: user,
+          });
+        } else {
+          res.send({ status: "error", message: "Error en al actualizar en BDD" });
+        }
       }
     }
   };
@@ -81,7 +106,33 @@ class UserController {
       }
     }
   };
-  
+
+  uploadFiles = async (req, res)=>{
+    const uid = req.params.uid;
+    const user = await userService.findOneUser({_id: uid});
+    
+    upload.array('files', 10)(req, res, async(err) => {  
+      if (err instanceof multer.MulterError) {
+        // Error de multer
+        res.status(400).json({ message: err.message });
+      } else if (err) {
+        // Error de validación de tipo de archivo o cualquier otro error
+        res.status(400).json({ message: err.message });
+      } else {
+        const { type } = req.body;
+        const files = req.files;
+        const documents = files.map((file) => ({
+          name: type,
+          reference: file.path
+        }));
+        documents.map((doc) => {
+          user.documents.push(doc);
+        })
+        await userService.updateUser(uid, user);
+        res.status(200).send('Archivos subidos correctamente');
+      }
+    });
+  }  
 }
 
 export default UserController;

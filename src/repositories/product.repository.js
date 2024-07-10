@@ -18,6 +18,11 @@ export default class ProductRepository{
     return result;
   }
 
+  createManyProducts = async(products) =>{
+    const result = await this.dao.createManyProducts(products);
+    return result;
+  }
+
   existCode = async(pCode) =>{
     if (await this.dao.existCode(pCode)) {
       return true;

@@ -81,6 +81,7 @@ class SessionController {
       const user = await userService.findOneUser({email: email});
       if (user) {
         if (isValidPassword(user, password)) {
+          await userService.updateUser(user._id, {last_connection: new Date().getTime()})
           usrDTO = new SessionDTO(user);
           const token = jwt.sign({usrDTO}, config.tokenPass, {expiresIn: "24h"});
           res.cookie("tokenUsrCookie", token, {maxAge: 60 * 60 * 1000 * 24, httpOnly: true});
@@ -101,6 +102,13 @@ class SessionController {
       }
     }
   };
+
+  logout = async(req, res) =>{
+    const user = await userService.findOneUser({email: req.user.usrDTO.email});
+    await userService.updateUser(user._id, {last_connection: new Date().getTime()})
+    res.clearCookie("tokenUsrCookie")
+    res.redirect("/login");
+  }
 
   passRecoveryMail = async (req, res) =>{
     const {email} = req.body;

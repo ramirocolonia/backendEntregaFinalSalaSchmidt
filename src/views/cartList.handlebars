@@ -13,7 +13,12 @@
   </div>
   <br/>
   <div>
-
+    <h2>Total $: {{total}}</h2>
+  </div>
+  <br/>
+  <div>
+    <button onclick="removeAllProductsFromCart('{{cid}}')">Vaciar Carrito</button>
+    <button onclick="createOrder('{{cid}}')">Finalizar Compra</button>
   </div>
 {{else}}
   <h1>No hay PRODUCTOS para mostrar</h1>

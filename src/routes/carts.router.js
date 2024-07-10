@@ -17,10 +17,10 @@ const {
 cartsRouter.post("/", newCart);
 cartsRouter.get("/:cid", loadCart);
 cartsRouter.post("/:cid/products/:pid", passportCall("jwt", ["USER", "PREMIUM"]), addProductInCart);
-cartsRouter.delete("/:cid/products/:pid", removeProductFromCart);
+cartsRouter.delete("/:cid/products/:pid", passportCall("jwt", ["USER", "PREMIUM"]), removeProductFromCart);
 cartsRouter.put("/:cid", updateCartItems);
 cartsRouter.put("/:cid/products/:pid", updateQuantityItemCart);
-cartsRouter.delete("/:cid", removeAllProductsFromCart);
+cartsRouter.delete("/:cid", passportCall("jwt", ["USER", "PREMIUM"]), removeAllProductsFromCart);
 cartsRouter.post("/:cid/purchase", passportCall("jwt", ["USER", "PREMIUM"]), createTicket);
 
 export default cartsRouter;

@@ -1,0 +1,17 @@
+<div>
+  <h2 id="email" name="email">{{user}}</h2>
+  <form action="/api/users/{{uid}}/documents" method="post" enctype="multipart/form-data">
+    <input type="hidden" id="usrID" name="usrID" value="{{uid}}">
+    <label for="type">selecciona el tipo de documento que desea subir</label>
+    <select name="type">
+      <option value="ID" selected>Identificación</option>
+      <option value="ADDRESS">Comprobante de domicilio</option>
+      <option value="ACCOUNTSTATEMENT">Comprobante de estado de cuenta</option>
+    </select>
+    <br>
+    <br>
+    <label for="archivo">selecciona un archivo</label>
+    <input type="file" id="files" name="files" required>
+    <button type="submit">Subir Archivo</button>
+  </form>
+</div>

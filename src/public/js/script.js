@@ -36,7 +36,7 @@ async function addToCart(pid, cid) {
     },
   });
   if(response.status === 200){
-    alert("Producto agreagado al carrito correctamente");
+    alert(`Producto agregado al carrito correctamente`);
     location.reload();
   }else{
     alert("error al agregar producto")
@@ -44,8 +44,6 @@ async function addToCart(pid, cid) {
 }
 
 async function removeProductFromCart(pid, cid){
-  console.log(pid)
-  console.log(cid)
   const response = await fetch(`/api/carts/${cid}/products/${pid}`, {
     method: "DELETE",
     headers: {
@@ -57,5 +55,35 @@ async function removeProductFromCart(pid, cid){
     location.reload();
   }else{
     alert("error al eliminar producto del carrito")
+  }
+}
+
+async function removeAllProductsFromCart(cid){
+  const response = await fetch(`/api/carts/${cid}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json"
+    },
+  });
+  if(response.status === 200){
+    alert("Todos los productos eliminados del carrito correctamente");
+    location.reload();
+  }else{
+    alert("error al eliminar los productos del carrito")
+  }
+}
+
+async function createOrder (cid){
+  const response = await fetch(`/api/carts/${cid}/purchase`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+  });
+  if(response.status === 200){
+    alert("Oden creada correctamente");
+    location.reload();
+  }else{
+    alert("error al eliminar los productos del carrito")
   }
 }

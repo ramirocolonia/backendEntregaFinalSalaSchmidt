@@ -17,7 +17,6 @@ import MongoConnection from "./config/MongoConnection.js";
 import errorHandler from "./middlewares/errors/index.js"
 import { swaggerSpecs } from "./config/doc.config.js";
 import usersRouter from "./routes/users.router.js";
-import { initializeSocketUsers } from "./sockets/socketServer.js";
 
 const app = express();
 const PORT = config.port || 3000;

@@ -17,6 +17,11 @@ class ProductMongo {
     return result;
   }
 
+  async createManyProducts(products) {
+    const result = await productModel.insertMany(products);
+    return result;
+  }
+
   async existCode(pCode) {
     if (await productModel.findOne({ code: pCode })) {
       return true;

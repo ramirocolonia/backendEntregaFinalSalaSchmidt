@@ -35,7 +35,7 @@ export const passportCall = (strategy, policies) =>{
 export const generateProducts = (quantity) =>{
   let products = [];
   for (let i = 0; i < quantity; i++) {
-    let thumnbnails = generateThumbnails();
+    let thumbnails = generateThumbnails();
     let product = {};
     product.title = faker.commerce.product();
     product.description = faker.commerce.productDescription();
@@ -44,19 +44,17 @@ export const generateProducts = (quantity) =>{
     product.status = true;
     product.stock = faker.number.int({min: 0, max: 999})
     product.category = faker.commerce.department();
-    product.thumnbnails = thumnbnails;
-
+    product.thumbnails = thumbnails;
     products.push(product);    
   }
   return products;
 }
 
 const generateThumbnails = () =>{
-  let thumnbnails = [];
+  let thumbnails = [];
   let times = faker.number.int({min: 0, max: 5});
   for (let i = 0; i < times; i++){
-    thumnbnails.push(faker.image.url());
+    thumbnails.push(faker.image.url());
   }
-  return thumnbnails;
+  return thumbnails;
 }
-

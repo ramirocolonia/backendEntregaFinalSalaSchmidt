@@ -1,9 +1,10 @@
+import { productService } from "../repositories/index.js";
 import { generateProducts } from "../utils.js";
 
 class MockingController{
-  loadMocking = (req, res) => {
+  loadMocking = async(req, res) => {
     try {
-      const products = generateProducts(100);
+      const products = generateProducts(5);
       res.json({ status: "success", payload: products });
     } catch (error) {
       res.send({ status: "error", message: "Error en ejecución de función generate products con faker, " + error });
