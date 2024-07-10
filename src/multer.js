@@ -31,7 +31,6 @@ const storage = multer.diskStorage({
       }
     }else if(file.mimetype.startsWith("application/pdf")){
       uploadPath = path.join(uploadPath, 'documents');
-      console.log(uploadPath);
     }else{
       throw new Error('Tipo de archivo no permitido');
     }

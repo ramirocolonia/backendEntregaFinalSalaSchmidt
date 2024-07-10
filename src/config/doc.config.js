@@ -2,8 +2,6 @@ import __dirname from "../utils.js";
 import swaggerJSDoc from "swagger-jsdoc";
 import path from "path";
 
-// console.log("JOIM")
-// console.log(`${path.join(__dirname, "docs/**/*.yaml")}`)
 const swaggerOptions = {
   definition:{
     openapi: "3.0.1",

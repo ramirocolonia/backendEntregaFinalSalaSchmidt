@@ -67,8 +67,8 @@ class UserController {
   deleteInactiveUsers = async (req, res) => {
     try {
       const limit = new Date();
-      const inactivityTime = 60 * 1000; //PARA PRUEBAS SE USA UN MINUTO
-      // const inactivityTime = (24*60*60*1000) * 2; LOS DOS DIAS QUE SOLICITA LA LETRA DEL PROY FINAL
+      // const inactivityTime = 60 * 1000; //PARA PRUEBAS SE USA UN MINUTO
+      const inactivityTime = (24*60*60*1000) * 2; //LOS DOS DIAS QUE SOLICITA LA LETRA DEL PROY FINAL
       limit.setTime(limit.getTime() - inactivityTime);
       const query = {
         is_active: true,
@@ -110,7 +110,6 @@ class UserController {
   uploadFiles = async (req, res)=>{
     const uid = req.params.uid;
     const user = await userService.findOneUser({_id: uid});
-    
     upload.array('files', 10)(req, res, async(err) => {  
       if (err instanceof multer.MulterError) {
         // Error de multer
@@ -125,9 +124,18 @@ class UserController {
           name: type,
           reference: file.path
         }));
-        documents.map((doc) => {
-          user.documents.push(doc);
-        })
+        // documents.map((doc) => {
+        //   user.documents.push(doc);
+        // });
+        // chequeo si ya existe ese documento guardado y se modifica la referencia en BDD
+        documents.forEach(newDoc => {
+          let doc = user.documents.find(item => item.name === newDoc.name);
+          if(doc){
+            doc.reference = newDoc.reference;
+          }else{
+            user.documents.push(newDoc);
+          }
+        });
         await userService.updateUser(uid, user);
         res.status(200).send('Archivos subidos correctamente');
       }
