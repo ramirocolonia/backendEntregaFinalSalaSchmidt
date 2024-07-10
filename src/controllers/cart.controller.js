@@ -54,22 +54,22 @@ class CartController {
                 // await productService.updateProduct(product._id, product);
                 res.send({ status: "success", payload: product });
               } else {
-                res.send({ status: "error", message: "Error al guardar producto" });
+                res.status(401).send({ status: "error", message: "Error al guardar producto" });
               }
             }else{
-              res.send({ status: "error", message: "El producto agregado al carrito pertenece al usuario" });  
+              res.status(401).send({ status: "error", message: "El producto agregado al carrito pertenece al usuario" });  
             }
           // }else{
           //   res.send({ status: "error", message: "No hay stock del producto seleccionado" });
           // }
         } else {
-          res.send({ status: "error", message: "Producto inexistente" });
+          res.status(401).send({ status: "error", message: "Producto inexistente" });
         }
       } else {
-        res.send({ status: "error", message: "Carrito inexistente" });
+        res.status(401).send({ status: "error", message: "Carrito inexistente" });
       }
     } catch (error) {
-      res.send({ status: "error", message: "Error en ejecución, " + error });
+      res.status(401).send({ status: "error", message: "Error en ejecución, " + error });
     }
   };
 
